@@ -1,0 +1,22 @@
+pre-commit:
+  parallel: true
+  commands:
+    gofmt:
+      glob: "*.go"
+      run: gofmt -w -s {staged_files} && git add {staged_files}
+    
+    golint:
+      glob: "*.go"
+      run: golangci-lint run
+    
+    godoc:
+      glob: "*.go"
+      run: |
+        go install golang.org/x/tools/cmd/godoc@latest
+        godoc -url=/pkg/$(go list -m) > docs/godoc.md
+        git add docs/godoc.md
+
+commit-msg:
+  commands:
+    lint-commit:
+      run: commitlint -E LEFTHOOK_COMMITFILE 
